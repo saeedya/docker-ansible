@@ -73,14 +73,17 @@ Dependencies
 
 Nothing.
 
-Example Playbook
+How to execute the playbook?
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+ansible-playbook -i inventory.ini -b install-docker.yaml
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+    -b : will running all plays as root user.
+    
+ansible-playbook -i inventory.ini -b install-docker.yaml --skip-tags "exit from role"
+
+    It will forcing docker installation or update.
+    
 
 License
 -------
