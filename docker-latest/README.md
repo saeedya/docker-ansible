@@ -1,31 +1,89 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role will install docker-ce on targeted remore hosts, both redhat-based and debian-based.
+It has four main directories with main yaml files:
+
+    - tasks
+        - main.yaml
+        - redhat.yaml
+        - debian.yaml
+    - defaults
+        - main.yaml
+    - vars
+        - main.yaml
+    - handlesrs
+        - main.yaml
 
 Requirements
 ------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Nothing.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+There are two types of variables:
+- defaults/main.yml
+ 
+  Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).   
+  
+    - docker_edition: 'ce'
+    - docker_package: "docker-{{ docker_edition }}"
+    - docker_package_state: present
+
+  Docker repo URL.
+    
+    - docker_repo_url: https://download.docker.com/linux
+
+  GPG keyring local path
+    
+    - gpg_keyring_local_path: /usr/share/keyrings
+
+  Used only for Debian/Ubuntu. Switch 'stable' to 'nightly' if needed.
+    
+    - docker_apt_release_channel: stable
+    - docker_apt_arch: amd64
+    - docker_apt_source_list: /etc/apt/sources.list.d/docker.list
+
+  Used only for RedHat/CentOS/Fedora.
+    
+    - docker_yum_repo_url: "{{ docker_repo_url }}/{{ (ansible_distribution == 'Fedora') | ternary('fedora','centos') }}/docker-{{ docker_edition }}.repo"
+    - docker_yum_repo_enable_nightly: '0'
+    - docker_yum_repo_enable_test: '0'
+    - docker_yum_gpg_key: "{{ docker_repo_url }}/centos/gpg"
+
+  Service options.
+    
+    - docker_service_state: started
+    - docker_service_enabled: true
+    - docker_restart_handler_state: restarted
+
+- vars/main.yml
+  dependencies:
+  
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+  
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Nothing.
 
-Example Playbook
+How to execute the playbook?
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+ansible-playbook -i inventory.ini -b install-docker.yaml
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+    -b : will running all plays as root user.
+    
+ansible-playbook -i inventory.ini -b install-docker.yaml --skip-tags "exit from role"
+
+    It will forcing docker installation or update.
+    
 
 License
 -------
@@ -35,4 +93,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+By Saeed Yasrebi.
