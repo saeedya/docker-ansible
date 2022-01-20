@@ -4,6 +4,10 @@
 
   - docker-latest: which installs latest docker release
   - docker-compose: which installs docker compose
+  
+  There are two main yaml files:
+  - install-docker.yaml : will refer to docker-latest role
+  - install-docker-compose.yaml : will refer to docker-compose role
 
 # what is Ansible?
 
