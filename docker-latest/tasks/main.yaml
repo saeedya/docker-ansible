@@ -1,0 +1,69 @@
+---
+# tasks file for docker-latest
+- name: Check for docker installed before
+  shell: which docker
+  register: result
+  ignore_errors: yes
+  tags:
+    - check for docker installed before
+
+- name: Exit when docker command exists
+  fail:
+    msg: "Docker has installed on your machine."
+  when: result.rc == 0
+  tags:
+    - exit from role
+
+- include_tasks: redhat.yaml
+  when: ansible_os_family == 'RedHat' and result.rc == 1
+  tags:
+    - going to install docker on RedHat-based 
+
+- include_tasks: debian.yaml
+  when: ansible_os_family == 'Debian' and result.rc == 1
+  tags:
+    - going to install docker on Debian-based
+
+- name: stoping docker if exists
+  systemd:
+    name: docker
+    state: stopped
+  ignore_errors: yes
+  tags:
+    - docker stop
+
+- name: Remove docker if exists
+  shell: apt remove docker* -y
+  ignore_errors: yes
+  when: ansible_os_family == 'Debian'
+  tags:
+    - docker remove
+
+- name: Remove docker if exists
+  shell: yum remove docker* -y
+  ignore_errors: yes
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - docker remove
+
+
+- name: Reboot a slow machine that might have lots of updates to apply
+  reboot:
+    reboot_timeout: 3600
+
+- name: Install Docker
+  package:
+    name: "{{ docker_package }}"
+    state: "{{ docker_package_state }}"
+  ignore_errors: yes
+  notify: restart docker
+  tags:
+    - installing docker
+
+- name: Ensure Docker is started and enabled at boot.
+  systemd:
+    name: docker
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"
+  tags:
+    - docker started and enabled at boot

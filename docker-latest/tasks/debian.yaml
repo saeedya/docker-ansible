@@ -1,0 +1,29 @@
+---
+- name: update apt
+  shell: apt update
+  tags:
+    - "updating apt"
+
+- name: Ensure dependencies are installed
+  apt:
+    name:
+    state: "{{ docker_package_state }}"
+  with_items: "{{ dependencies }}"
+  tags:
+    - "check for dependencies installed"
+
+- name: Add Docker’s official GPG key
+  shell: curl -fsSL {{ docker_repo_url }}/ubuntu/gpg | sudo gpg --dearmor -o {{ gpg_keyring_local_path }}/docker-archive-keyring.gpg
+  #shell: curl -fsSL {{ docker_repo_url }}/ubuntu/gpg | sudo apt-key add -
+  tags:
+    - "adding gpg key"
+
+- name: setting stable repository
+  shell: echo "deb [arch={{ docker_apt_arch }} signed-by={{ gpg_keyring_local_path }}/docker-archive-keyring.gpg] {{ docker_repo_url }}/ubuntu $(lsb_release -cs) {{ docker_apt_release_channel }}" | tee "{{ docker_apt_source_list }}" > /dev/null
+  tags:
+    - "setting stable repository"
+
+- name: update apt
+  shell: apt update
+  tags:
+    - "updating apt"

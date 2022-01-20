@@ -1,0 +1,20 @@
+---
+- name: update yum
+  shell: yum update -y
+  tags:
+    - "updating yum"
+
+- name: Add Docker GPG key.
+  rpm_key:
+    key: "{{ docker_yum_gpg_key }}"
+    state: present
+  tags:
+    - add docker GPG key
+
+- name: Install wget
+  shell: yum install wget -y
+  tags:
+    - install wget
+
+- name: getitng docker repositories
+  shell: cd /etc/yum.repos.d && wget {{ docker_yum_repo_url }}
