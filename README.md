@@ -9,6 +9,8 @@
   - install-docker.yaml : will refer to docker-latest role
   - install-docker-compose.yaml : will refer to docker-compose role
 
+  Requirement are in requirements.txt file
+
 # what is Ansible?
 
 ![image](https://user-images.githubusercontent.com/16374030/150411459-de785816-92bb-4165-a69d-d3343e8b3ace.png)
