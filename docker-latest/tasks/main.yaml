@@ -2,17 +2,16 @@
 # tasks file for docker-latest
 - name: Check for docker installed before
   shell: which docker
-  register: result
+  register: output
   ignore_errors: yes
   tags:
     - check for docker installed before
 
 - name: Exit when docker command exists
-  fail:
-    msg: "Docker has installed on your machine."
-  when: result.rc == 0
+  meta: end_play
+  when: output.rc == 0
   tags:
-    - exit from role
+    - Exit
 
 - include_tasks: redhat.yaml
   when: ansible_os_family == 'RedHat' and result.rc == 1

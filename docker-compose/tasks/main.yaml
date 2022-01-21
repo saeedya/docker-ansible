@@ -1,0 +1,38 @@
+---
+# tasks file for docker-compose
+
+- name: check for docker-compose exists
+  shell: whereis docker-compose
+  register: output
+  ignore_errors: yes
+  tags:
+    - check for docker-compose exists
+
+- name: Exit from host
+  meta: end_play
+  when: output.rc == 0
+  tags:
+    - Exit
+
+- name: Check current docker-compose version.
+  command: "{{ docker_compose_path }} --version"
+  register: docker_compose_current_version
+  changed_when: false
+  failed_when: false
+
+- name: Delete existing docker-compose version if it's different.
+  file:
+    path: "{{ docker_compose_path }}"
+    state: absent
+  when: >
+    docker_compose_current_version.stdout is defined
+    and docker_compose_version not in docker_compose_current_version.stdout
+
+- name: Install Docker Compose (if configured).
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: "{{ docker_compose_path }}"
+    mode: 0755
+  when: >
+    docker_compose_current_version.stdout is not defined
+    or docker_compose_version not in docker_compose_current_version.stdout
