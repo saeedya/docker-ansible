@@ -80,7 +80,7 @@ ansible-playbook -i inventory.ini -b install-docker.yaml
 
     -b : will running all plays as root user.
     
-ansible-playbook -i inventory.ini -b install-docker.yaml --skip-tags "exit from role"
+ansible-playbook -i inventory.ini -b install-docker.yaml --skip-tags "Exit"
 
     It will forcing docker installation or update.
     

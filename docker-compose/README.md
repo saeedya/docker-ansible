@@ -1,31 +1,39 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role will install docker-compose on targeted remore hosts, both redhat-based and debian-based.
+It has two main directories with main yaml files:
+
+	- tasks/main.yaml
+	- defaults/main.yaml
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Nothing.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Docker Compose options.
+
+docker_install_compose: true
+docker_compose_version: "2.2.3"
+docker_compose_arch: x86_64
+docker_compose_url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-Linux-{{ docker_compose_arch }}"
+docker_compose_path: /usr/local/bin/docker-compose
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Nothing.
 
-Example Playbook
+How to execute 
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Normal installation : ansible-playbook -i inventory.ini -b install-docker-compose.yaml
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+force installation : ansible-playbook -i inventory.ini -b install-docker-compose.yaml --skip-tags "Exit"
 
 License
 -------
@@ -35,4 +43,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+By Saeed yasrebi.
